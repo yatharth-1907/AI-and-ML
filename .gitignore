@@ -1,7 +1,5 @@
-
-
-
-
-
 #Ignore vscode AI rules
 .github\instructions\codacy.instructions.md
+
+LangChain/venv/
+LangChain/.env
