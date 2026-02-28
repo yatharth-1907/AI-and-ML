@@ -1,0 +1,24 @@
+from pydantic import BaseModel,EmailStr,AnyUrl,Field
+from typing import List,Dict,Optional,Annotated
+
+class patient(BaseModel):
+    name:Annotated[str,Field(max_length=50, title='Name of the patient',description="In this you have to write the name of the patient with the maximum length of 50",examples=["Raj",'Ajay'])]
+    age:int=Field(gt=0, le=70)
+    weight:float
+    height:Optional[float]=None
+    linkedin_id:AnyUrl
+    email:Optional[EmailStr]=None
+    allergies:Annotated[List[str],Field(default=None,description="here you have to write the allergies which the patient have.")]
+    contact:Optional[Dict[str,str]]=None
+    
+def insert_details(Patient:patient):
+    print(Patient.name)
+    print(Patient.age)
+    print(Patient.allergies)
+    print(Patient.email)
+    
+patient_info={'name':"Yatharth",'age':21,'weight':50,'contact':{"number":'9424852525'},'linkedin_id':"http:\linkedin.com",'email':'abcde@gmail.com'}
+
+patient1=patient(**patient_info)
+
+insert_details(patient1)

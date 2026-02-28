@@ -4,3 +4,4 @@
 venv/
 LangChain/.env
 LangChain/Outputs/__pycache__/
+API_calling/__pycache__/
