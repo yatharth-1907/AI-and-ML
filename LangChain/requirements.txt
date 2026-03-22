@@ -36,3 +36,7 @@ pypdf
 
 #access website content
 beautifulsoup4
+
+#text Splitter 
+langchain-text-splitters
+lanchain_experimental
