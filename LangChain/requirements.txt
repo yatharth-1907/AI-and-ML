@@ -27,3 +27,12 @@ scikit-learn
 
 # to draw graphs 
 grandalf
+
+#to us community develop features
+langchain_community 
+
+#get the PDF text 
+pypdf
+
+#access website content
+beautifulsoup4
