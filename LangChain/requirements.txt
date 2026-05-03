@@ -39,4 +39,10 @@ beautifulsoup4
 
 #text Splitter 
 langchain-text-splitters
-lanchain_experimental
+# lanchain_experimental
+
+#get youtubevideo Transcript
+youtube-transcript-api
+
+#open route service
+langchain-openrouter
