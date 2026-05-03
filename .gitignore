@@ -8,3 +8,4 @@ API_calling/__pycache__/
 API_calling/Model/student-performance-dataset
 API_calling/Model/.env
 .env 
+.vscode/
