@@ -2,3 +2,6 @@ langgraph
 langchain
 dotenv
 langchain-groq
+streamlit
+langgraph-checkpoint-mongodb
+langfuse
