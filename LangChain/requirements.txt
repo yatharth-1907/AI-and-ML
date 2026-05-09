@@ -24,25 +24,3 @@ python-dotenv
 # Machine Learning Utilities
 numpy
 scikit-learn
-
-# to draw graphs 
-grandalf
-
-#to us community develop features
-langchain_community 
-
-#get the PDF text 
-pypdf
-
-#access website content
-beautifulsoup4
-
-#text Splitter 
-langchain-text-splitters
-# lanchain_experimental
-
-#get youtubevideo Transcript
-youtube-transcript-api
-
-#open route service
-langchain-openrouter
