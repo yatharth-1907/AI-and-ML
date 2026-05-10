@@ -73,13 +73,33 @@ if user_input:
         
     CONFIG={'configurable':{'thread_id': st.session_state['thread_id']}}
         
+    # streamlit_DB_frontend.py
+
     with st.chat_message('assistant'):
-         ai_message = st.write_stream(
-            message_chunk.content for message_chunk , metadata in chatbot.stream(
-                {'messages':[HumanMessage(content=user_input)]},
+        def response_generator():
+            for message_chunk, metadata in chatbot.stream(
+                {'messages': [HumanMessage(content=user_input)]},
                 config=CONFIG,
                 stream_mode='messages'
-            )
-        )
+            ):
+                if metadata.get('langgraph_node') != 'chat_node':
+                    continue
+                
+                content = message_chunk.content
+                
+                if not content:
+                    continue
+                
+                # Plain string (Groq, OpenAI style)
+                if isinstance(content, str):
+                    yield content
+                
+                # List of blocks (Gemini style)
+                elif isinstance(content, list):
+                    for block in content:
+                        if isinstance(block, dict) and block.get('type') == 'text':
+                            yield block['text']
+
+        ai_message = st.write_stream(response_generator())
     
     st.session_state['message_history'].append({'role':'assistant','content':ai_message})

@@ -1,8 +1,10 @@
 from langgraph.graph import StateGraph,START,END
 from typing import TypedDict,Annotated
 from langchain_core.messages import BaseMessage,HumanMessage
-from langchain_groq import ChatGroq
-from langchain_openrouter import ChatOpenRouter
+# from langchain_groq import ChatGroq
+# from langchain_openrouter import ChatOpenRouter
+from langchain_google_genai import ChatGoogleGenerativeAI
+
 import os 
 # import operator
 from langgraph.graph.message import add_messages
@@ -22,18 +24,28 @@ load_dotenv()
 
 client = MongoClient("mongodb://localhost:27017/")
 
-llm = ChatGroq(model="llama-3.3-70b-versatile")
+# llm = ChatGroq(model="mixtral-8x7b-32768", disable_streaming=True)
 # llm = ChatOpenRouter(model='minimax/minimax-m2.5:free')
-
+llm = ChatGoogleGenerativeAI(model = 'gemini-2.5-flash')
 class ChatState(TypedDict):
     messages: Annotated[list[BaseMessage],add_messages]
     
 #################################tools####################################
 
-search_tool = DuckDuckGoSearchRun(region='us-en')
+_ddg = DuckDuckGoSearchRun(region='us-en')
 
 @tool
-def calculator(first_num: float, second_num,operation: str)->dict:
+def web_search(query: str) -> str:
+    """Search the web for current information using DuckDuckGo. 
+    Use this for recent events, stock prices, news, or anything requiring up-to-date info.
+    
+    Args:
+        query: The search query string
+    """
+    return _ddg.invoke(query)
+
+@tool
+def calculator(first_num: float, second_num:float ,operation: str)->dict:
     '''bPerform a basic arithmetic operation on two numbers.
     Supported operations: add, subtract multipy, divide
     '''
@@ -66,7 +78,7 @@ def get_stock_price(symbol:str)-> dict:
 ############################ Graph Node ####################
 
 #make tool list
-tools= [get_stock_price,search_tool,calculator]
+tools= [get_stock_price,web_search,calculator]
 
 #Make the LLM tool-aware
 llm_with_tools= llm.bind_tools(tools)
@@ -75,7 +87,7 @@ llm_with_tools= llm.bind_tools(tools)
 def chat_node(state: ChatState):
     #take user query from state to LLm and store the response
     messages = state['messages']
-    response= llm.invoke(messages)
+    response= llm_with_tools.invoke(messages)
     return {'messages':[response]}
 
 tool_node = ToolNode(tools) #execute tool call
@@ -102,6 +114,15 @@ def retrieve_all_threads():
         all_threads.add(checkpoint.config['configurable']['thread_id'])
     return list(all_threads)
 
+
+if __name__ == "__main__":
+    config = {'configurable': {'thread_id': 'test-123'}}
+    
+    result = chatbot.invoke(
+        {'messages': [HumanMessage(content='who is the parent company of youtube')]},
+        config=config
+    )
+    print(result['messages'][-1].content) 
 # thread_id='1'
 # config={'configurable':{'thread_id': thread_id}}
 
